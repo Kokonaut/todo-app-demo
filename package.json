@@ -1,0 +1,26 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:frontend": "npm run dev -w @todo-app/frontend",
+    "dev:backend": "npm run dev:local -w @todo-app/backend",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "db:start": "docker compose up -d dynamodb-local",
+    "db:stop": "docker compose down",
+    "db:setup": "bash scripts/setup-local-db.sh",
+    "build": "npm run build -w @todo-app/shared && npm run build -w @todo-app/frontend && npm run build -w @todo-app/backend",
+    "test": "npm test --workspaces --if-present",
+    "deploy:backend": "cd infra && sam build && sam deploy",
+    "deploy:frontend": "aws s3 sync packages/frontend/dist s3://$(aws cloudformation describe-stacks --stack-name todo-app-dev --query 'Stacks[0].Outputs[?OutputKey==`FrontendBucketName`].OutputValue' --output text) --delete"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

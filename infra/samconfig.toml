@@ -1,0 +1,35 @@
+# SAM CLI Configuration
+# Run: sam deploy --guided for first-time setup
+
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "todo-app-dev"
+resolve_s3 = true
+s3_prefix = "todo-app"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Stage=dev"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[staging.deploy.parameters]
+stack_name = "todo-app-staging"
+resolve_s3 = true
+s3_prefix = "todo-app-staging"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Stage=staging"
+
+[prod.deploy.parameters]
+stack_name = "todo-app-prod"
+resolve_s3 = true
+s3_prefix = "todo-app-prod"
+region = "us-east-1"
+confirm_changeset = false
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "Stage=prod"
