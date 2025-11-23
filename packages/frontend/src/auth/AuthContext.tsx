@@ -8,7 +8,7 @@ import {
 import { userPool } from './config'
 import type { User } from '@todo-app/shared'
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null
   isLoading: boolean
   isAuthenticated: boolean
@@ -19,9 +19,10 @@ interface AuthContextType {
   getAccessToken: () => Promise<string | null>
 }
 
-const AuthContext = createContext<AuthContextType | null>(null)
+// Shared context - exported so LocalAuthProvider can use it too
+export const AuthContext = createContext<AuthContextType | null>(null)
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function CognitoAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 

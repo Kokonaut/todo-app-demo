@@ -13,6 +13,10 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 cd "$PROJECT_ROOT"
 
+# Set dummy AWS credentials for DynamoDB Local (it doesn't validate them)
+export AWS_ACCESS_KEY_ID=dummy
+export AWS_SECRET_ACCESS_KEY=dummy
+
 echo -e "${GREEN}=== Todo App Local Development ===${NC}"
 echo ""
 
@@ -80,7 +84,7 @@ start_database() {
     # Wait for DynamoDB to be ready
     echo "Waiting for DynamoDB to be ready..."
     for i in {1..30}; do
-        if aws dynamodb list-tables --endpoint-url http://localhost:8000 &> /dev/null; then
+        if aws dynamodb list-tables --endpoint-url http://localhost:8000 --region us-east-1 &> /dev/null; then
             echo -e "  ${GREEN}✓${NC} DynamoDB is ready"
             break
         fi
@@ -98,11 +102,12 @@ setup_database() {
     echo "Setting up database tables..."
 
     # Check if table already exists
-    if aws dynamodb describe-table --table-name todos --endpoint-url http://localhost:8000 &> /dev/null; then
+    if aws dynamodb describe-table --table-name todos --endpoint-url http://localhost:8000 --region us-east-1 &> /dev/null; then
         echo -e "  ${GREEN}✓${NC} Table 'todos' already exists"
     else
         aws dynamodb create-table \
             --endpoint-url http://localhost:8000 \
+            --region us-east-1 \
             --table-name todos \
             --attribute-definitions \
                 AttributeName=userId,AttributeType=S \
